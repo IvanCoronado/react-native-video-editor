@@ -68,6 +68,11 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
         NSArray* tracks = [asset tracks];
         AVAssetTrack* track = [tracks objectAtIndex:0];
         originalTransform = [track preferredTransform];
+        NSLog(@"%@", originalTransform.a);
+        NSLog(@"%@", originalTransform.b);
+        NSLog(@"%@", originalTransform.c);
+        NSLog(@"%@", originalTransform.d);
+        NSLog(@"%@", originalTransform);
     }
     
     // Use the transform from the original track to set the video track transform.
