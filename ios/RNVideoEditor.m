@@ -63,11 +63,11 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
             if (naturalSize.width == transform.tx && naturalSize.height == transform.ty) {
                 NSLog(@"VIDEO ORIENTATION -> UIInterfaceOrientationLandscapeRight");
                  //these videos have the identity transform, yet they are upside down.
-                                 //we need to rotate them by M_PI radians (180 degrees) and shift the video back into place
+                 //we need to rotate them by M_PI radians (180 degrees) and shift the video back into place
 
-                                 CGAffineTransform rotateTransform = CGAffineTransformMakeRotation(M_PI);
-                                 CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(naturalSize.width, naturalSize.height);
-                                 [videoLayerInstruction setTransform:CGAffineTransformConcat(rotateTransform, translateTransform) atTime:time];
+                 CGAffineTransform rotateTransform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(180));
+                 CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(naturalSize.width, naturalSize.height);
+                 [videoLayerInstruction setTransform:CGAffineTransformConcat(rotateTransform, translateTransform) atTime:time];
             } else if (transform.tx == 0 && transform.ty == 0) {
                 NSLog(@"VIDEO ORIENTATION -> UIInterfaceOrientationLandscapeLeft");
                 [videoLayerInstruction setTransform:transform atTime:time];
@@ -94,20 +94,20 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
         // set the frame rate to 30fps
         mutableVideoComposition.frameDuration = CMTimeMake(1, 30);
 
-         //set the rendersize for the video we're about to write
-            if (firstVideoSize.width == firstVideoTransform.tx && firstVideoSize.height == firstVideoTransform.ty) {
-                NSLog(@"First video -> UIInterfaceOrientationLandscapeRight");
-                mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.width,firstTrackFirstVideo.naturalSize.height);
-            } else if (firstVideoTransform.tx == 0 && firstVideoTransform.ty == 0) {
-                NSLog(@"First video -> UIInterfaceOrientationLandscapeLeft");
-                mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.width,firstTrackFirstVideo.naturalSize.height);
-            } else if (firstVideoTransform.tx == 0 && firstVideoTransform.ty == firstVideoSize.width) {
-                NSLog(@"First video -> UIInterfaceOrientationPortraitUpsideDown");
-               mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.height, firstTrackFirstVideo.naturalSize.width);
-            } else {
-                NSLog(@"First video -> UIInterfaceOrientationPortrait");
-                mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.height, firstTrackFirstVideo.naturalSize.width);
-            }
+        //set the rendersize for the video we're about to write
+        if (firstVideoSize.width == firstVideoTransform.tx && firstVideoSize.height == firstVideoTransform.ty) {
+            NSLog(@"First video -> UIInterfaceOrientationLandscapeRight");
+            mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.width,firstTrackFirstVideo.naturalSize.height);
+        } else if (firstVideoTransform.tx == 0 && firstVideoTransform.ty == 0) {
+            NSLog(@"First video -> UIInterfaceOrientationLandscapeLeft");
+            mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.width,firstTrackFirstVideo.naturalSize.height);
+        } else if (firstVideoTransform.tx == 0 && firstVideoTransform.ty == firstVideoSize.width) {
+            NSLog(@"First video -> UIInterfaceOrientationPortraitUpsideDown");
+            mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.height, firstTrackFirstVideo.naturalSize.width);
+        } else {
+            NSLog(@"First video -> UIInterfaceOrientationPortrait");
+            mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.height, firstTrackFirstVideo.naturalSize.width);
+        }
 
 
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
