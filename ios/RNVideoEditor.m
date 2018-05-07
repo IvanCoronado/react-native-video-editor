@@ -15,10 +15,10 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
 
     NSLog(@"%@ %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
 
-    [self MergeVideosLandscape:fileNames callback:successCallback];
+    [self MergeVideos:fileNames callback:successCallback];
 }
 
-- (void)MergeVideosLandscape:(NSArray *)fileNames callback:(RCTResponseSenderBlock)successCallback {
+- (void)MergeVideos:(NSArray *)fileNames callback:(RCTResponseSenderBlock)successCallback {
         NSUInteger count = 0;
         AVAsset *firstVideo = [AVAsset assetWithURL:[NSURL fileURLWithPath:[fileNames objectAtIndex:0]]];
         NSArray* firstVideoTracks = [firstVideo tracks];
@@ -26,9 +26,13 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
         CGSize firstVideoSize = firstTrackFirstVideo.naturalSize;
         CGAffineTransform firstVideoTransform = firstTrackFirstVideo.preferredTransform;
 
-        AVMutableComposition *mutableComposition = [AVMutableComposition composition];
+        AVMutableComposition *mutableComposition = [[AVMutableComposition alloc] init];
         AVMutableCompositionTrack *videoCompositionTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeVideo
                                                                                            preferredTrackID:kCMPersistentTrackID_Invalid];
+
+        AVMutableCompositionTrack *audioTrack = [mutableComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                           preferredTrackID:kCMPersistentTrackID_Invalid];
+
         __block NSMutableArray *instructions = [[NSMutableArray alloc] init];
         __block CMTime time = kCMTimeZero;
         __block AVMutableVideoComposition *mutableVideoComposition = [AVMutableVideoComposition videoComposition];
@@ -53,6 +57,11 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
                                            ofTrack:assetTrack
                                             atTime:time
                                              error:&error];
+
+            [audioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, cliptime)
+                                                    ofTrack:[[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0]
+                                                     atTime:time
+                                                      error:&error];
             if (error) {
                 NSLog(@"%s: Error - %@", __PRETTY_FUNCTION__, error.debugDescription);
             }
@@ -108,7 +117,6 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
             NSLog(@"First video -> UIInterfaceOrientationPortrait");
             mutableVideoComposition.renderSize = CGSizeMake(firstTrackFirstVideo.naturalSize.height, firstTrackFirstVideo.naturalSize.width);
         }
-
 
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths firstObject];
