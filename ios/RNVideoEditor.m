@@ -127,20 +127,20 @@ RCT_EXPORT_METHOD(merge:(NSArray *)fileNames
 
         [exporter exportAsynchronouslyWithCompletionHandler:^{
             switch ([exporter status])
-                    {
-                        case AVAssetExportSessionStatusFailed:
-                            break;
+            {
+                case AVAssetExportSessionStatusFailed:
+                    break;
 
-                        case AVAssetExportSessionStatusCancelled:
-                            break;
+                case AVAssetExportSessionStatusCancelled:
+                    break;
 
-                        case AVAssetExportSessionStatusCompleted:
-                            successCallback(@[@"merge video complete", outputFile]);
-                            break;
+                case AVAssetExportSessionStatusCompleted:
+                    successCallback(@[@"merge video complete", outputFile]);
+                    break;
 
-                        default:
-                            break;
-                    }
+                default:
+                    break;
+            }
         }];
     }
 
